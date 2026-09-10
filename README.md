@@ -20,16 +20,18 @@ Install the package plus the peers required by the entry points a repository act
 ### ESLint WordPress
 
 ```sh
-pnpm add -D @rocketsarenostalgic/quality-config @wordpress/eslint-plugin@25.7.0 @babel/core@7.29.7 eslint@9.39.5 react@18.3.1 react-dom@18.3.1
+pnpm add -D @rocketsarenostalgic/quality-config @wordpress/eslint-plugin@25.7.0 @babel/core@7.29.7 eslint@9.39.5 prettier@3.9.5 react@18.3.1 react-dom@18.3.1 typescript@6.0.3
 ```
 
-`@babel/core` is a required peer of the pinned WordPress ESLint plugin. React and React DOM satisfy the required peer boundary of its transitive WordPress theme package. Prettier and TypeScript are optional in the pinned WordPress ESLint graph and are not required for the JavaScript-only baseline fixture.
+`@babel/core` is a required peer of the pinned WordPress ESLint plugin. Its exact transitive graph also requires Prettier and TypeScript under strict pnpm peer validation, while its transitive WordPress theme package requires React and React DOM. These are quality-tool graph requirements; they do not require the consuming application to use React or TypeScript. The ESLint family does not require Stylelint or Stylelint-SCSS.
 
 ### Prettier
 
 ```sh
 pnpm add -D @rocketsarenostalgic/quality-config @wordpress/prettier-config@4.51.0 prettier@3.9.5
 ```
+
+The Prettier family does not require ESLint or Stylelint.
 
 ### Stylelint WordPress CSS
 
@@ -43,7 +45,7 @@ pnpm add -D @rocketsarenostalgic/quality-config @wordpress/stylelint-config@24.0
 pnpm add -D @rocketsarenostalgic/quality-config @wordpress/stylelint-config@24.0.0 stylelint@16.26.1 stylelint-scss@6.14.0 react@18.3.1 react-dom@18.3.1
 ```
 
-The pinned WordPress Stylelint package requires both `stylelint` and `stylelint-scss` even for its CSS base and depends on the WordPress theme package, whose React and React DOM peers are required. This is an upstream tool-family requirement, not a requirement for the consuming application to use SCSS or React.
+The pinned WordPress Stylelint package requires both `stylelint` and `stylelint-scss` even for its CSS base and depends on the WordPress theme package, whose React and React DOM peers are required. This is an upstream tool-family requirement, not a requirement for the consuming application to use SCSS or React. The Stylelint family does not require ESLint or Prettier.
 
 CI proves these boundaries from the packed artifact in separate temporary consumer roots with peer auto-installation disabled, strict peer checking enabled, and hoisting disabled. Each root installs only its documented tool-family peer set and executes the corresponding config.
 

@@ -18,8 +18,16 @@ const versionFor = (name) => {
 const families = [
     {
         name: 'eslint',
-        dependencies: [ '@wordpress/eslint-plugin', '@babel/core', 'eslint', 'react', 'react-dom' ],
-        absentTopLevel: [ 'prettier', 'stylelint', 'stylelint-scss' ],
+        dependencies: [
+            '@wordpress/eslint-plugin',
+            '@babel/core',
+            'eslint',
+            'prettier',
+            'react',
+            'react-dom',
+            'typescript',
+        ],
+        absentTopLevel: [ 'stylelint', 'stylelint-scss' ],
         test: `
 import assert from 'node:assert/strict';
 import { ESLint } from 'eslint';
