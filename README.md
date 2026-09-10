@@ -11,6 +11,19 @@ The package centralises the organisation-level ancestry for ESLint, Prettier and
 - `@rocketsarenostalgic/quality-config/stylelint/wordpress`
 - `@rocketsarenostalgic/quality-config/stylelint/wordpress-scss`
 
+## Tool peers
+
+The public entry points are independently consumable. Tool peers are declared optional at package level so a repository using one quality surface is not required to install unrelated tools.
+
+Install the peers required by the entry points a repository actually executes:
+
+- ESLint WordPress: `eslint` `^9.39.5`;
+- Prettier: `prettier` `^3.9.5`;
+- Stylelint WordPress CSS: `stylelint` `^16.26.1`;
+- Stylelint WordPress SCSS: `stylelint` `^16.26.1` and `stylelint-scss` `^6.14.0`.
+
+A consumer may use several entry points together and should keep the corresponding tool versions in its own tracked package manifest and lockfile.
+
 ## Design boundary
 
 The initial release deliberately stays close to the official WordPress packages. Starter-only additions such as logical-property enforcement, rational declaration ordering, unsupported-browser warnings and animation-performance plugins are **not** promoted until they have been proven across representative RAN repositories.
