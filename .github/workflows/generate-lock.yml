@@ -58,7 +58,7 @@ jobs:
         run: |
           set -euo pipefail
           cp generated/pnpm-lock.yaml pnpm-lock.yaml
-          if git diff --quiet -- pnpm-lock.yaml; then
+          if [ -z "$(git status --porcelain -- pnpm-lock.yaml)" ]; then
             exit 0
           fi
           git config user.name 'github-actions[bot]'
