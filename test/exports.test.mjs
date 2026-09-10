@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import test from 'node:test';
+import { pathToFileURL } from 'node:url';
 
 import { ESLint } from 'eslint';
 import * as prettierApi from 'prettier';
@@ -14,15 +15,19 @@ const prettier = require('@rocketsarenostalgic/quality-config/prettier');
 const stylelintWordPress = require('@rocketsarenostalgic/quality-config/stylelint/wordpress');
 const stylelintWordPressScss = require('@rocketsarenostalgic/quality-config/stylelint/wordpress-scss');
 
-test('declares every tool peer optional while retaining exact development pins', async () => {
+test('declares the complete bundled peer set with exact development pins', async () => {
+    const entry = pathToFileURL(require.resolve('@rocketsarenostalgic/quality-config/eslint/wordpress'));
     const { devDependencies, peerDependencies, peerDependenciesMeta } = JSON.parse(
-        await readFile(new URL('../package.json', import.meta.url)),
+        await readFile(new URL('../package.json', entry)),
     );
 
-    for (const [ peer, range ] of Object.entries(peerDependencies)) {
-        assert.equal(peerDependenciesMeta[peer]?.optional, true, `${peer} must remain an optional peer`);
-        assert.ok(devDependencies[peer], `${peer} must remain installed for repository validation`);
-        assert.match(range, new RegExp(devDependencies[peer].replaceAll('.', '\\.')));
+    assert.deepEqual(Object.keys(peerDependencies).sort(), [
+        '@babel/core', 'eslint', 'postcss', 'prettier', 'react', 'react-dom',
+        'stylelint', 'stylelint-scss', 'typescript',
+    ]);
+    for (const peer of Object.keys(peerDependencies)) {
+        assert.notEqual(peerDependenciesMeta?.[peer]?.optional, true, `${peer} must be required`);
+        assert.match(devDependencies[peer], /^\d+\.\d+\.\d+$/, `${peer} must have an exact development pin`);
     }
 });
 

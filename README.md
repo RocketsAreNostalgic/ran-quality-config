@@ -13,16 +13,17 @@ The package centralises the organisation-level ancestry for ESLint, Prettier and
 
 ## Tool peers
 
-The public entry points are independently consumable. Tool peers are declared optional at package level so a repository using one quality surface is not required to install unrelated tools.
+This is one bundled package, not independently installable toolchains. Consumers may execute any subset of its entry points, but must install the full peer set even when using only ESLint, Prettier or CSS Stylelint. All three upstream WordPress configs are unconditional dependencies, and optional peers on this package cannot make their required peers optional.
 
-Install the peers required by the entry points a repository actually executes:
+Install the package and its complete peer set as development dependencies (the versions below are the CI consumer fixture pins):
 
-- ESLint WordPress: `eslint` `^9.39.5`;
-- Prettier: `prettier` `^3.9.5`;
-- Stylelint WordPress CSS: `stylelint` `^16.26.1`;
-- Stylelint WordPress SCSS: `stylelint` `^16.26.1` and `stylelint-scss` `^6.14.0`.
+```sh
+pnpm add -D @rocketsarenostalgic/quality-config @babel/core@7.29.7 eslint@9.39.5 postcss@8.5.28 prettier@3.9.5 react@18.3.1 react-dom@18.3.1 stylelint@16.26.1 stylelint-scss@6.14.0 typescript@6.0.3
+```
 
-A consumer may use several entry points together and should keep the corresponding tool versions in its own tracked package manifest and lockfile.
+The supported peer ranges are declared in `package.json`. Babel and TypeScript support the upstream ESLint graph; PostCSS and Stylelint-SCSS support the Stylelint graph, including its SCSS ancestry. React and React DOM satisfy the transitive WordPress theme dependencies. These are tooling dependencies, not a requirement to use React or TypeScript in application code. Keep React and React DOM on matching versions, and track the complete peer set in the consumer's manifest and lockfile.
+
+Peer auto-installation is not required. CI installs the packed package with only this documented peer set, `autoInstallPeers: false` and `strictPeerDependencies: true`, then executes all four public entry points outside this repository.
 
 ## Design boundary
 
@@ -97,3 +98,5 @@ pnpm check
 ```
 
 `pnpm check` loads every public package export and executes representative ESLint, Prettier, CSS Stylelint and SCSS Stylelint fixtures so upstream configuration-resolution problems fail in this package before reaching consumers.
+
+`pnpm test:consumer` packs the package, installs it in a temporary consumer with only the documented peers and strict peer checking, and runs the same executable fixtures. This separate CI check requires registry access and does not inherit the repository's development dependencies.
