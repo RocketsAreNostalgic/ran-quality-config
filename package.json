@@ -36,6 +36,20 @@
     "stylelint": "^16.26.1",
     "stylelint-scss": "^6.14.0"
   },
+  "peerDependenciesMeta": {
+    "eslint": {
+      "optional": true
+    },
+    "prettier": {
+      "optional": true
+    },
+    "stylelint": {
+      "optional": true
+    },
+    "stylelint-scss": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "eslint": "9.39.5",
     "prettier": "3.9.5",
