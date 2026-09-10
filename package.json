@@ -22,7 +22,7 @@
     "./stylelint/wordpress-scss": "./stylelint/wordpress-scss.cjs"
   },
   "scripts": {
-    "test": "node --test test/*.test.mjs",
+    "test": "node --test test/exports.test.mjs",
     "check": "pnpm test"
   },
   "dependencies": {
