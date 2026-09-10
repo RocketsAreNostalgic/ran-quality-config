@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import test from 'node:test';
-import { pathToFileURL } from 'node:url';
 
 import { ESLint } from 'eslint';
 import * as prettierApi from 'prettier';
@@ -15,18 +14,30 @@ const prettier = require('@rocketsarenostalgic/quality-config/prettier');
 const stylelintWordPress = require('@rocketsarenostalgic/quality-config/stylelint/wordpress');
 const stylelintWordPressScss = require('@rocketsarenostalgic/quality-config/stylelint/wordpress-scss');
 
-test('declares the complete bundled peer set with exact development pins', async () => {
-    const entry = pathToFileURL(require.resolve('@rocketsarenostalgic/quality-config/eslint/wordpress'));
+const expectedPeers = [
+    '@babel/core',
+    '@wordpress/eslint-plugin',
+    '@wordpress/prettier-config',
+    '@wordpress/stylelint-config',
+    'eslint',
+    'prettier',
+    'react',
+    'react-dom',
+    'stylelint',
+    'stylelint-scss',
+    'typescript',
+];
+
+test('declares every shared tool/config peer optional and retains exact development pins', async () => {
     const { devDependencies, peerDependencies, peerDependenciesMeta } = JSON.parse(
-        await readFile(new URL('../package.json', entry)),
+        await readFile(new URL('../package.json', import.meta.url)),
     );
 
-    assert.deepEqual(Object.keys(peerDependencies).sort(), [
-        '@babel/core', 'eslint', 'postcss', 'prettier', 'react', 'react-dom',
-        'stylelint', 'stylelint-scss', 'typescript',
-    ]);
-    for (const peer of Object.keys(peerDependencies)) {
-        assert.notEqual(peerDependenciesMeta?.[peer]?.optional, true, `${peer} must be required`);
+    assert.deepEqual(Object.keys(peerDependencies).sort(), expectedPeers.slice().sort());
+
+    for (const peer of expectedPeers) {
+        assert.equal(peerDependenciesMeta?.[peer]?.optional, true, `${peer} must remain optional at package level`);
+        assert.equal(typeof devDependencies[peer], 'string', `${peer} must remain installed for repository validation`);
         assert.match(devDependencies[peer], /^\d+\.\d+\.\d+$/, `${peer} must have an exact development pin`);
     }
 });
@@ -59,7 +70,7 @@ test('loads and executes the WordPress Prettier configuration', async () => {
 });
 
 test('loads and executes the WordPress CSS Stylelint profile', async () => {
-    assert.deepEqual(stylelintWordPress.extends, [ '@wordpress/stylelint-config' ]);
+    assert.deepEqual(stylelintWordPress.extends, [ require.resolve('@wordpress/stylelint-config') ]);
 
     const result = await stylelint.lint({
         code: '/* RAN shared config fixture. */\n.ran-fixture {\n\tdisplay: block;\n}\n',
@@ -71,7 +82,7 @@ test('loads and executes the WordPress CSS Stylelint profile', async () => {
 });
 
 test('loads and executes the WordPress SCSS Stylelint profile independently', async () => {
-    assert.deepEqual(stylelintWordPressScss.extends, [ '@wordpress/stylelint-config/scss' ]);
+    assert.deepEqual(stylelintWordPressScss.extends, [ require.resolve('@wordpress/stylelint-config/scss') ]);
 
     const result = await stylelint.lint({
         code: '$display: block;\n\n.ran-fixture {\n\tdisplay: $display;\n\n\t&__child {\n\t\tdisplay: none;\n\t}\n}\n',
