@@ -21,7 +21,7 @@ test('loads and executes the WordPress ESLint flat-config baseline', async () =>
         overrideConfigFile: true,
         overrideConfig: eslintWordPress,
     });
-    const [ result ] = await eslint.lintText('/* RAN shared config fixture. */\n', {
+    const [ result ] = await eslint.lintText('export const answer = 42;\n', {
         filePath: 'fixture.js',
     });
 
@@ -56,7 +56,7 @@ test('loads and executes the WordPress SCSS Stylelint profile independently', as
     assert.deepEqual(stylelintWordPressScss.extends, [ '@wordpress/stylelint-config/scss' ]);
 
     const result = await stylelint.lint({
-        code: '/* RAN shared config fixture. */\n.ran-fixture {\n\tdisplay: block;\n}\n',
+        code: '$display: block;\n\n.ran-fixture {\n\tdisplay: $display;\n\n\t&__child {\n\t\tdisplay: none;\n\t}\n}\n',
         codeFilename: 'fixture.scss',
         config: stylelintWordPressScss,
     });
