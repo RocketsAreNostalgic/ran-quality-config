@@ -95,3 +95,5 @@ corepack enable
 pnpm install --frozen-lockfile
 pnpm check
 ```
+
+`pnpm check` loads every public package export and executes representative ESLint, Prettier, CSS Stylelint and SCSS Stylelint fixtures so upstream configuration-resolution problems fail in this package before reaching consumers.
