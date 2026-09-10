@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import test from 'node:test';
 
@@ -12,6 +13,18 @@ const require = createRequire(import.meta.url);
 const prettier = require('@rocketsarenostalgic/quality-config/prettier');
 const stylelintWordPress = require('@rocketsarenostalgic/quality-config/stylelint/wordpress');
 const stylelintWordPressScss = require('@rocketsarenostalgic/quality-config/stylelint/wordpress-scss');
+
+test('declares every tool peer optional while retaining exact development pins', async () => {
+    const { devDependencies, peerDependencies, peerDependenciesMeta } = JSON.parse(
+        await readFile(new URL('../package.json', import.meta.url)),
+    );
+
+    for (const [ peer, range ] of Object.entries(peerDependencies)) {
+        assert.equal(peerDependenciesMeta[peer]?.optional, true, `${peer} must remain an optional peer`);
+        assert.ok(devDependencies[peer], `${peer} must remain installed for repository validation`);
+        assert.match(range, new RegExp(devDependencies[peer].replaceAll('.', '\\.')));
+    }
+});
 
 test('loads and executes the WordPress ESLint flat-config baseline', async () => {
     assert.ok(Array.isArray(eslintWordPress));
