@@ -7,7 +7,10 @@ settings:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
+      '@babel/core':
+        specifier: 7.29.7
+        version: 7.29.7
       '@wordpress/eslint-plugin':
         specifier: 25.7.0
         version: 25.7.0(@babel/core@7.29.7)(@typescript-eslint/eslint-plugin@8.70.0(@typescript-eslint/parser@8.70.0(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5)(typescript@6.0.3))(@typescript-eslint/parser@8.70.0(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5)(postcss@8.5.28)(prettier@3.9.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(stylelint@16.26.1(typescript@6.0.3))(typescript@6.0.3)
@@ -17,10 +20,6 @@ importers:
       '@wordpress/stylelint-config':
         specifier: 24.0.0
         version: 24.0.0(postcss@8.5.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(stylelint-scss@6.14.0(stylelint@16.26.1(typescript@6.0.3)))(stylelint@16.26.1(typescript@6.0.3))
-    devDependencies:
-      '@babel/core':
-        specifier: 7.29.7
-        version: 7.29.7
       eslint:
         specifier: 9.39.5
         version: 9.39.5
