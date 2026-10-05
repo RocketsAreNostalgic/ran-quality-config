@@ -25,7 +25,7 @@ Consumer migrations should show that shared config adoption preserves or strengt
 
 ## CI
 
-GitHub Actions is the workflow control plane; jobs run on RAN's Blacksmith runner (`blacksmith-2vcpu-ubuntu-2404`). Keep third-party actions pinned to immutable commit SHAs and checkout credentials disabled before project-controlled commands run.
+GitHub Actions is the workflow control plane; jobs run on standard GitHub-hosted Ubuntu 24.04 runners (`ubuntu-24.04`). Keep third-party actions pinned to immutable commit SHAs and checkout credentials disabled before project-controlled commands run.
 
 ## Blacksmith AI prohibition
 
