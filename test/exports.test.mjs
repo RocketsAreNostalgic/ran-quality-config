@@ -92,3 +92,22 @@ test('loads and executes the WordPress SCSS Stylelint profile independently', as
 
     assert.equal(result.errored, false, result.results.flatMap(({ warnings }) => warnings.map(({ text }) => text)).join('\n'));
 });
+
+for (const [ label, declaration ] of [
+    [ 'invalid hex colours', 'color: #ggg' ],
+    [ 'unknown units', 'width: 1qu' ],
+    [ 'nonstandard gradient directions', 'background: linear-gradient(top, red, blue)' ],
+]) {
+    test(`the CSS profile still rejects ${label} through property-value validation`, async () => {
+        const result = await stylelint.lint({
+            code: `.ran-fixture { ${declaration}; }`,
+            codeFilename: 'fixture.css',
+            config: stylelintWordPress,
+        });
+
+        assert.equal(result.errored, true);
+        assert.ok(result.results[0].warnings.some(
+            ({ rule }) => rule === 'declaration-property-value-no-unknown',
+        ));
+    });
+}
