@@ -115,7 +115,7 @@ The CSS profiles require WordPress configuration 26.1.0, Stylelint 17 and Stylel
 
 The upgrade removes the old selector-parser dependency path. The development lock resolves every `postcss-selector-parser` to 7.1.6 and every `source-map-js` to 1.2.2; consumers must also refresh and inspect their own locks.
 
-WordPress now rejects relative font weights and private `--_wp-` / `--_gcd-` custom properties, and inherits additional declaration, media and at-rule validation. CSS checks for invalid hex colours, units and gradient directions move to `declaration-property-value-no-unknown`; regression fixtures verify those rejections.
+WordPress now rejects relative font weights and private `--_wp-` / `--_gcd-` custom properties, and inherits additional declaration, media and at-rule validation. The new `declaration-property-value-no-unknown` rule validates ordinary declarations but skips custom-property values. The RAN CSS profile retains the previous `color-no-invalid-hex`, `unit-no-unknown` and `function-linear-gradient-no-nonstandard-direction` rules to preserve those checks. Regression fixtures verify rejection in both ordinary and custom-property declarations.
 
 **SCSS acceptance boundary:** upstream disables `no-descending-specificity` and `no-duplicate-selectors` for SCSS because Stylelint 17 interprets standard CSS nesting rather than Sass selector concatenation. Re-enabling those rules does not reproduce the old Sass checks. This is a reduction in the former SCSS coverage and needs explicit owner acceptance before adopting this profile; it is not evidence of unchanged SCSS enforcement. See the [Stylelint 17 migration guide](https://stylelint.io/migration-guide/to-17/). CSS consumers retain the checks unless they already have local exceptions.
 

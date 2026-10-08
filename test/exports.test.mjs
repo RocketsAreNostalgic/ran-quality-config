@@ -111,3 +111,20 @@ for (const [ label, declaration ] of [
         ));
     });
 }
+
+for (const [ rule, value ] of [
+    [ 'color-no-invalid-hex', '#ggg' ],
+    [ 'unit-no-unknown', '1qu' ],
+    [ 'function-linear-gradient-no-nonstandard-direction', 'linear-gradient(top, #fff, #000)' ],
+]) {
+    test(`the CSS profile retains ${rule} for custom-property values`, async () => {
+        const result = await stylelint.lint({
+            code: `.ran-fixture { --example: ${value}; }`,
+            codeFilename: 'fixture.css',
+            config: stylelintWordPress,
+        });
+
+        assert.equal(result.errored, true);
+        assert.ok(result.results[0].warnings.some((warning) => warning.rule === rule));
+    });
+}
