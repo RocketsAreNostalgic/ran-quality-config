@@ -36,16 +36,16 @@ The Prettier family does not require ESLint or Stylelint.
 ### Stylelint WordPress CSS
 
 ```sh
-pnpm add -D @rocketsarenostalgic/quality-config @wordpress/stylelint-config@24.0.0 stylelint@16.26.1 stylelint-scss@6.14.0 react@18.3.1 react-dom@18.3.1
+pnpm add -D @rocketsarenostalgic/quality-config @wordpress/stylelint-config@26.1.0 stylelint@17.14.1 stylelint-scss@7.2.0 react@18.3.1 react-dom@18.3.1
 ```
 
 ### Stylelint WordPress SCSS
 
 ```sh
-pnpm add -D @rocketsarenostalgic/quality-config @wordpress/stylelint-config@24.0.0 stylelint@16.26.1 stylelint-scss@6.14.0 react@18.3.1 react-dom@18.3.1
+pnpm add -D @rocketsarenostalgic/quality-config @wordpress/stylelint-config@26.1.0 stylelint@17.14.1 stylelint-scss@7.2.0 react@18.3.1 react-dom@18.3.1
 ```
 
-The pinned WordPress Stylelint package requires both `stylelint` and `stylelint-scss` even for its CSS base and depends on the WordPress theme package, whose React and React DOM peers are required. This is an upstream tool-family requirement, not a requirement for the consuming application to use SCSS or React. The Stylelint family does not require ESLint or Prettier.
+The pinned WordPress Stylelint package requires both `stylelint` and `stylelint-scss` even for its CSS base. Although its WordPress theme dependency declares React and React DOM optional, nested WordPress element and compose dependencies require them under strict peer validation. The packed-consumer checks retain React and React DOM, while installing neither ESLint nor Prettier. These are tooling requirements, not application framework requirements.
 
 CI proves these boundaries from the packed artifact in separate temporary consumer roots with peer auto-installation disabled, strict peer checking enabled, and hoisting disabled. Each root installs only its documented tool-family peer set and executes the corresponding config.
 
@@ -111,7 +111,15 @@ The RAN Stylelint entry points resolve their pinned WordPress config peer from t
 
 ## Version policy
 
-The first release intentionally remains compatible with the proven RAN Starter/Booster tooling generation: ESLint 9, Prettier 3 and Stylelint 16, while consuming the reviewed WordPress config versions in those lines. ESLint 10 / Stylelint 17 migrations should be tested across representative consumers before the shared package makes them the organisation default.
+The CSS profiles require WordPress configuration 26.1.0, Stylelint 17 and Stylelint-SCSS 7. ESLint 9 and Prettier 3 remain unchanged. Consumers must upgrade the CSS peer set together and qualify their local plugins and exceptions; this change does not authorize automatic rollout.
+
+The upgrade removes the old selector-parser dependency path. The development lock resolves every `postcss-selector-parser` to 7.1.6 and every `source-map-js` to 1.2.2; consumers must also refresh and inspect their own locks.
+
+WordPress now rejects relative font weights and private `--_wp-` / `--_gcd-` custom properties, and inherits additional declaration, media and at-rule validation. The new `declaration-property-value-no-unknown` rule validates ordinary declarations but skips custom-property values. The RAN CSS profile retains the previous `color-no-invalid-hex`, `unit-no-unknown` and `function-linear-gradient-no-nonstandard-direction` rules to preserve those checks. Regression fixtures verify rejection in both ordinary and custom-property declarations.
+
+**SCSS acceptance boundary:** upstream disables `no-descending-specificity` and `no-duplicate-selectors` for SCSS because Stylelint 17 interprets standard CSS nesting rather than Sass selector concatenation. Re-enabling those rules does not reproduce the old Sass checks. This is a reduction in the former SCSS coverage and needs explicit owner acceptance before adopting this profile; it is not evidence of unchanged SCSS enforcement. See the [Stylelint 17 migration guide](https://stylelint.io/migration-guide/to-17/). CSS consumers retain the checks unless they already have local exceptions.
+
+Shared publication remains subject to qualification of the same candidate against Core and Starter, including Starter’s local plugins. A passing package fixture alone does not satisfy that consumer requirement.
 
 ## Development
 
