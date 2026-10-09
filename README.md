@@ -51,7 +51,7 @@ CI proves these boundaries from the packed artifact in separate temporary consum
 
 ## Design boundary
 
-The initial release deliberately stays close to the official WordPress packages. Starter-only additions such as logical-property enforcement, rational declaration ordering, unsupported-browser warnings and animation-performance plugins are **not** promoted until they have been proven across representative RAN repositories.
+The initial release deliberately stays close to the official WordPress packages. The CSS and SCSS profiles follow the official WordPress configuration without additional RAN enforcement. Logical-property enforcement, rational declaration ordering, unsupported-browser warnings and animation-performance plugins are not part of this baseline.
 
 Repository-local configuration continues to own:
 
@@ -115,11 +115,11 @@ The CSS profiles require WordPress configuration 26.1.0, Stylelint 17 and Stylel
 
 The upgrade removes the old selector-parser dependency path. The development lock resolves every `postcss-selector-parser` to 7.1.6 and every `source-map-js` to 1.2.2; consumers must also refresh and inspect their own locks.
 
-WordPress now rejects relative font weights and private `--_wp-` / `--_gcd-` custom properties, and inherits additional declaration, media and at-rule validation. The new `declaration-property-value-no-unknown` rule validates ordinary declarations but skips custom-property values. The RAN CSS profile retains the previous `color-no-invalid-hex`, `unit-no-unknown` and `function-linear-gradient-no-nonstandard-direction` rules to preserve those checks. Regression fixtures verify rejection in both ordinary and custom-property declarations.
+WordPress now rejects relative font weights and private `--_wp-` / `--_gcd-` custom properties, and inherits additional declaration, media and at-rule validation. The new `declaration-property-value-no-unknown` rule validates ordinary declarations but skips custom-property values. The RAN CSS profile follows that upstream behavior: it does not restore `color-no-invalid-hex`, `unit-no-unknown` or `function-linear-gradient-no-nonstandard-direction`. Ordinary declaration validation remains tested; invalid custom-property values previously caught by those additional rules may pass. Tests compare the effective CSS and SCSS rules with their upstream profiles to prevent additional RAN enforcement.
 
-**SCSS acceptance boundary:** upstream disables `no-descending-specificity` and `no-duplicate-selectors` for SCSS because Stylelint 17 interprets standard CSS nesting rather than Sass selector concatenation. Re-enabling those rules does not reproduce the old Sass checks. This is a reduction in the former SCSS coverage and needs explicit owner acceptance before adopting this profile; it is not evidence of unchanged SCSS enforcement. See the [Stylelint 17 migration guide](https://stylelint.io/migration-guide/to-17/). CSS consumers retain the checks unless they already have local exceptions.
+**SCSS coverage:** upstream disables `no-descending-specificity` and `no-duplicate-selectors` for SCSS because Stylelint 17 interprets standard CSS nesting rather than Sass selector concatenation. Re-enabling those rules does not reproduce the old Sass checks. This reduces the former SCSS coverage. The [owner decision of 9 October 2026](https://github.com/RocketsAreNostalgic/.github/issues/65#issuecomment-6077430975) accepts the upstream CSS/SCSS baseline, including these limitations, without additional RAN replacement checks. See the [Stylelint 17 migration guide](https://stylelint.io/migration-guide/to-17/). CSS consumers retain the checks unless they already have local exceptions.
 
-Shared publication remains subject to qualification of the same candidate against Core and Starter, including Starter’s local plugins. A passing package fixture alone does not satisfy that consumer requirement.
+Shared publication remains subject to qualification of the same candidate against Core and Starter, including its project configuration and generated assets. A changed shared candidate also requires separate Core requalification. A passing package fixture alone does not satisfy that consumer requirement.
 
 ## Development
 

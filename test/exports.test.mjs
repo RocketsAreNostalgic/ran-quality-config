@@ -112,19 +112,16 @@ for (const [ label, declaration ] of [
     });
 }
 
-for (const [ rule, value ] of [
-    [ 'color-no-invalid-hex', '#ggg' ],
-    [ 'unit-no-unknown', '1qu' ],
-    [ 'function-linear-gradient-no-nonstandard-direction', 'linear-gradient(top, #fff, #000)' ],
+for (const [ label, profile, upstream, filename ] of [
+    [ 'CSS', stylelintWordPress, '@wordpress/stylelint-config', 'fixture.css' ],
+    [ 'SCSS', stylelintWordPressScss, '@wordpress/stylelint-config/scss', 'fixture.scss' ],
 ]) {
-    test(`the CSS profile retains ${rule} for custom-property values`, async () => {
-        const result = await stylelint.lint({
-            code: `.ran-fixture { --example: ${value}; }`,
-            codeFilename: 'fixture.css',
-            config: stylelintWordPress,
+    test(`the ${label} profile uses the upstream rules without additional RAN enforcement`, async () => {
+        const actual = await stylelint.resolveConfig(filename, { config: profile });
+        const expected = await stylelint.resolveConfig(filename, {
+            config: { extends: [ require.resolve(upstream) ] },
         });
 
-        assert.equal(result.errored, true);
-        assert.ok(result.results[0].warnings.some((warning) => warning.rule === rule));
+        assert.deepEqual(actual.rules, expected.rules);
     });
 }
