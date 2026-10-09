@@ -123,6 +123,8 @@ Shared publication remains subject to qualification of the same candidate agains
 
 ## Development
 
+Maintained RAN Node tooling uses a shared minimum of Node 24.21.0 within the Node 24 LTS line. This package declares `>=24.21.0 <25`, pins Volta and CI to 24.21.0, and retains pnpm 11.13.1. This is a development toolchain requirement; it does not change browser or WordPress/PHP product support. Consumers should align their declared Node range and CI pin and qualify their locked graph before adoption.
+
 After generating and committing `pnpm-lock.yaml`:
 
 ```sh
